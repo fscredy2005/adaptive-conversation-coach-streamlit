@@ -1,0 +1,2 @@
+streamlit[auth]==1.67.0
+livekit-api==1.2.3

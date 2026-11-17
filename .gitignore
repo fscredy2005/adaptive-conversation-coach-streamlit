@@ -1,0 +1,10 @@
+*
+!.gitignore
+!README.md
+!streamlit_app.py
+!streamlit_support.py
+!requirements.txt
+!.streamlit/
+.streamlit/*
+!.streamlit/config.toml
+!.streamlit/secrets.toml.example
