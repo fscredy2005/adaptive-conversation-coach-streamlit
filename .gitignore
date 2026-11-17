@@ -4,6 +4,9 @@
 !streamlit_app.py
 !streamlit_support.py
 !requirements.txt
+!tests/
+tests/*
+!tests/test_preview_no_api.py
 !.streamlit/
 .streamlit/*
 !.streamlit/config.toml

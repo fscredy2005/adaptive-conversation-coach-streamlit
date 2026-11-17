@@ -26,13 +26,6 @@ try:
 except FileNotFoundError:
     secrets = {}
 settings = {key: str(os.environ.get(key, secrets.get(key, ""))) for key in KEYS}
-web_url = settings["VOICE_WEB_URL"] or "http://localhost:3000/streamlit"
-try:
-    web_url = validate_web_url(web_url)
-except ValueError as error:
-    st.error(str(error))
-    st.stop()
-
 enabled = settings["ENABLE_VOICE_SERVICES"] == "1"
 logged_in = getattr(st.user, "is_logged_in", False)
 authenticated = authorized_user(
@@ -73,6 +66,22 @@ elif st.button("Se déconnecter"):
     st.session_state.pop("voice_ticket", None)
     st.logout()
 
+if not enabled:
+    st.session_state.pop("voice_ticket", None)
+    st.session_state.voice_status = "disconnected"
+    st.info(
+        "Aperçu sans API : services vocaux désactivés. "
+        "Le module vocal sera disponible après configuration."
+    )
+    st.stop()
+
+web_url = settings["VOICE_WEB_URL"] or "http://localhost:3000/streamlit"
+try:
+    web_url = validate_web_url(web_url)
+except ValueError as error:
+    st.error(str(error))
+    st.stop()
+
 active = st.session_state.get("voice_status") in ("connecting", "connected")
 language = st.selectbox(
     "Langue / Language",
@@ -87,11 +96,6 @@ mode = st.selectbox(
     disabled=active,
 )
 st.caption("Entretien : questions successives, sans évaluation ni score de coaching.")
-if not enabled:
-    st.info(
-        "Aperçu sans API : services vocaux désactivés. L’interface peut être examinée sans consommer de quota."
-    )
-
 status = st.session_state.get("voice_status", "disconnected")
 st.write(
     "Connexion : "

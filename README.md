@@ -10,12 +10,13 @@ La [documentation Community Cloud](https://docs.streamlit.io/deploy/streamlit-co
 
 Les permissions GitHub du dépôt et l’autorisation d’utiliser le moteur vocal sont différentes : le code de cette façade est public, mais les clés et l’identité autorisée sont uniquement dans les Secrets Streamlit.
 
-## Contenu autorisé : sept fichiers
+## Contenu autorisé : huit fichiers
 
 - streamlit_app.py et streamlit_support.py ;
 - requirements.txt ;
 - .streamlit/config.toml et .streamlit/secrets.toml.example ;
-- README.md et .gitignore.
+- README.md et .gitignore ;
+- tests/test_preview_no_api.py : test de non-chargement, sans API.
 
 Aucun code du worker, composant React, historique Git privé, statistique personnelle, enregistrement, clé ou rapport n’est inclus. La signature d’un JWT est une opération cryptographique locale, sans appel IA ; le secret de signature reste côté serveur.
 
@@ -91,7 +92,7 @@ Les champs vides doivent être remplis uniquement dans le gestionnaire de secret
 
 ## Déploiement Community Cloud : procédure manuelle, non exécutée
 
-1. Publier uniquement les sept fichiers de ce dépôt public.
+1. Publier uniquement les huit fichiers de ce dépôt public.
 2. Dans Community Cloud, créer une nouvelle app depuis ce dépôt, branche main, entrée streamlit_app.py, Python 3.13. L’app sera publique par défaut ; ne changer la visibilité d’aucune autre application.
 3. Ajouter les Secrets ci-dessus et laisser ENABLE_VOICE_SERVICES="0" pour la première vérification.
 4. Préparer séparément les hébergements du module et du worker, leurs secrets et origines. L’agent reste désactivé tant que les coûts ne sont pas autorisés.
@@ -119,4 +120,6 @@ $env:ENABLE_VOICE_SERVICES = "0"
 .\.venv\Scripts\python.exe -m streamlit run .\streamlit_app.py
 ```
 
-Sans module web local, la page peut s’afficher mais la zone intégrée ne sera pas disponible. Les fichiers React et Python LiveKit nécessaires restent dans le projet privé ; ils ne sont pas inclus ici.
+Avec ENABLE_VOICE_SERVICES="0", seul un message de disponibilité après configuration est affiché : aucune iframe, URL de module ou connexion vocale n’est chargée. Les fichiers React et Python LiveKit nécessaires restent dans le projet privé ; ils ne sont pas inclus ici.
+
+Test de régression sans API : python -m unittest discover -s tests -p test_preview_no_api.py
